@@ -4,6 +4,8 @@ Personal data
 """
 import re
 import logging
+import os
+import mysql.connector
 from typing import List
 
 
@@ -49,3 +51,27 @@ def get_logger() -> logging.Logger:
     handler.setFormatter(RedactingFormatter(PII_FIELDS))
     logger.addHandler(handler)
     return logger
+
+
+def get_db():
+    """Returns a connector to the MySQL database."""
+    db_username = os.getenv("PERSONAL_DATA_DB_USERNAME", "root")
+    db_password = os.getenv("PERSONAL_DATA_DB_PASSWORD", "")
+    db_host = os.getenv("PERSONAL_DATA_DB_HOST", "localhost")
+    db_name = os.getenv("PERSONAL_DATA_DB_NAME")
+
+    if db_name is None:
+        raise ValueError(
+            "PERSONAL_DATA_DB_NAME environment variable is not set")
+
+    try:
+        connection = mysql.connector.connect(
+            user=db_username,
+            password=db_password,
+            host=db_host,
+            database=db_name
+        )
+        return connection
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        return None

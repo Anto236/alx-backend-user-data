@@ -7,6 +7,9 @@ import logging
 from typing import List
 
 
+"""Define the PII_FIELDS tuple constant"""
+PII_FIELDS = ("name", "email", "ssn", "password", "credit_card")
+
 def filter_datum(fields: List[str], redaction: str, message: str,
                  separator: str) -> str:
     """ returns the log message obfuscated """
@@ -32,3 +35,18 @@ class RedactingFormatter(logging.Formatter):
         return filter_datum(self.fields, self.REDACTION,
                             super(RedactingFormatter, self).format(record),
                             self.SEPARATOR)
+
+def get_logger() -> logging.Logger:
+    logger = logging.getLogger("user_data")
+    logger.setLevel(logging.INFO)
+
+    """Create a StreamHandler with RedactingFormatter as formatter"""
+    handler = logging.StreamHandler()
+    formatter = RedactingFormatter(fields=PII_FIELDS)
+    handler.setFormatter(formatter)
+
+    logger.addHandler(handler)
+    """Do not propagate messages to other loggers"""
+    logger.propagate = False
+
+    return logger

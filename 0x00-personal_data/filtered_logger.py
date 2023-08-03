@@ -56,13 +56,43 @@ def get_logger() -> logging.Logger:
 def get_db() -> mysql.connector.connection.MySQLConnection:
     """ Implement db conectivity
     """
-    psw = os.getenv("PERSONAL_DATA_DB_PASSWORD", "")
-    username = os.getenv('PERSONAL_DATA_DB_USERNAME', "root")
-    host = os.getenv('PERSONAL_DATA_DB_HOST', 'localhost')
+    db_psw = os.getenv("PERSONAL_DATA_DB_PASSWORD", "")
+    db_username = os.getenv('PERSONAL_DATA_DB_USERNAME', "root")
+    db_host = os.getenv('PERSONAL_DATA_DB_HOST', 'localhost')
     db_name = os.getenv('PERSONAL_DATA_DB_NAME')
     conn = mysql.connector.connect(
-        host=host,
+        host=db_host,
         database=db_name,
-        user=username,
-        password=psw)
+        user=db_username,
+        password=db_psw)
     return conn
+
+
+def main():
+    """Retrieve all rows from users table and display them with filtering."""
+    logger = get_logger()
+    db = get_db()
+
+    if db is None:
+        logger.error("Error connecting to the database")
+        return
+
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM users;")
+    rows = cursor.fetchall()
+    cursor.close()
+    db.close()
+
+    logger.info("Filtered data:")
+    for row in rows:
+        filtered_row = []
+        for field in PII_FIELDS:
+            filtered_row.append(f"{field}={logger.REDACTION}")
+        filtered_row.append(f"ip={row['ip']}")
+        filtered_row.append(f"last_login={row['last_login']}")
+        filtered_row.append(f"user_agent={row['user_agent']}")
+        logger.info(" ".join(filtered_row))
+
+
+if __name__ == "__main__":
+    main()

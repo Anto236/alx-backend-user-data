@@ -13,21 +13,6 @@ from typing import List
 PII_FIELDS = ('name', 'password', 'phone', 'ssn', 'email')
 
 
-def get_db() -> mysql.connector.connection.MySQLConnection:
-    """ Implement db conectivity
-    """
-    psw = os.getenv("PERSONAL_DATA_DB_PASSWORD", "")
-    username = os.getenv('PERSONAL_DATA_DB_USERNAME', "root")
-    host = os.getenv('PERSONAL_DATA_DB_HOST', 'localhost')
-    db_name = os.getenv('PERSONAL_DATA_DB_NAME')
-    conn = mysql.connector.connect(
-        host=host,
-        database=db_name,
-        user=username,
-        password=psw)
-    return conn
-
-
 def filter_datum(fields: List[str], redaction: str, message: str,
                  separator: str) -> str:
     """ returns the log message obfuscated """
@@ -66,3 +51,18 @@ def get_logger() -> logging.Logger:
     handler.setFormatter(RedactingFormatter(PII_FIELDS))
     logger.addHandler(handler)
     return logger
+
+
+def get_db() -> mysql.connector.connection.MySQLConnection:
+    """ Implement db conectivity
+    """
+    psw = os.getenv("PERSONAL_DATA_DB_PASSWORD", "")
+    username = os.getenv('PERSONAL_DATA_DB_USERNAME', "root")
+    host = os.getenv('PERSONAL_DATA_DB_HOST', 'localhost')
+    db_name = os.getenv('PERSONAL_DATA_DB_NAME')
+    conn = mysql.connector.connect(
+        host=host,
+        database=db_name,
+        user=username,
+        password=psw)
+    return conn

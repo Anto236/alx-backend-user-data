@@ -10,6 +10,7 @@ from typing import List
 """Define the PII_FIELDS tuple constant"""
 PII_FIELDS = ('name', 'password', 'phone', 'ssn', 'email')
 
+
 def filter_datum(fields: List[str], redaction: str, message: str,
                  separator: str) -> str:
     """ returns the log message obfuscated """
@@ -35,6 +36,7 @@ class RedactingFormatter(logging.Formatter):
         return filter_datum(self.fields, self.REDACTION,
                             super(RedactingFormatter, self).format(record),
                             self.SEPARATOR)
+
 
 def get_logger() -> logging.Logger:
     """ Implementing a logger.

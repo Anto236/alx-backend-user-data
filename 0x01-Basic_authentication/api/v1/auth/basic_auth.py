@@ -56,18 +56,11 @@ class BasicAuth(Auth):
 
     def user_object_from_credentials(self, user_email: str, user_pwd: str):
         """Returns the User instance based on email and password."""
-        if user_email is None or not isinstance(user_email, str):
+        if not user_email or not user_pwd:
             return None
 
-        if user_pwd is None or not isinstance(user_pwd, str):
+        user = User.search({"email": user_email})
+        if not user or not user[0].is_valid_password(user_pwd):
             return None
 
-        users = User.search({"email": user_email})
-        if not users:
-            return None
-
-        user = users[0]
-        if not user.is_valid_password(user_pwd):
-            return None
-
-        return user
+        return user[0]

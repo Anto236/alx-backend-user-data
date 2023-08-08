@@ -25,8 +25,11 @@ class Auth:
         return True
 
     def authorization_header(self, request=None) -> str:
-        """ Placeholder method for retrieving authorization header """
-        return None
+        """ Retrieve the Authorization header from the request """
+        if request is None or "Authorization" not in request.headers:
+            return None
+
+        return request.headers.get("Authorization")
 
     def current_user(self, request=None):
         """ Placeholder method for getting the current user """

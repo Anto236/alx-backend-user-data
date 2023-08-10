@@ -1,15 +1,23 @@
 #!/usr/bin/env python3
+"""
+Authentication systems: Basic authentication and Session authentication
+"""
+from flask import Flask, jsonify, abort, request
+from flask_cors import CORS
+from os import getenv
 from api.v1.auth.session_auth import SessionAuth
 from datetime import datetime, timedelta
 from models.user import User
-from api.v1.app import auth
-from os import getenv
 
 
 class SessionExpAuth(SessionAuth):
-    """SessionExpAuth class inherits from SessionAuth"""
+    """
+    Session authentication class with session expiration.
+    Inherits from SessionAuth.
+    """
+
     def __init__(self):
-        """Initialize session duration based on environment variable"""
+        """Initialize SessionExpAuth instance with session duration."""
         session_duration_str = getenv("SESSION_DURATION", "0")
         try:
             self.session_duration = int(session_duration_str)
@@ -17,7 +25,15 @@ class SessionExpAuth(SessionAuth):
             self.session_duration = 0
 
     def create_session(self, user_id=None):
-        """Create a new session with an expiration date"""
+        """
+        Create a session with session expiration.
+
+        Args:
+            user_id (str): User ID.
+
+        Returns:
+            str: Session ID.
+        """
         session_id = super().create_session(user_id)
         if not session_id:
             return None
@@ -28,7 +44,15 @@ class SessionExpAuth(SessionAuth):
         return session_id
 
     def user_id_for_session_id(self, session_id=None):
-        """Retrieve the user ID based on session ID, considering expiration"""
+        """
+        Get user ID for a given session ID with session expiration.
+
+        Args:
+            session_id (str): Session ID.
+
+        Returns:
+            str: User ID if valid session, else None.
+        """
         if session_id is None:
             return None
         session_dict = self.user_id_by_session_id.get(session_id)

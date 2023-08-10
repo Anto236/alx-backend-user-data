@@ -10,6 +10,7 @@ class SessionDBAuth(SessionExpAuth):
     """
     SessionDBAuth class.
     """
+
     def create_session(self, user_id=None):
         """
         Create a new UserSession instance and return the Session ID.
@@ -38,8 +39,8 @@ class SessionDBAuth(SessionExpAuth):
 
     def destroy_session(self, request=None):
         """
-        Destroy the UserSession based on the
-        Session ID from the request cookie.
+        Destroy the UserSession based on the Session
+        ID from the request cookie.
         """
         if request is None:
             return False

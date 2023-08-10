@@ -2,6 +2,7 @@
 from api.v1.auth.session_auth import SessionAuth
 from datetime import datetime, timedelta
 from models.user import User
+from api.v1.app import auth
 from os import getenv
 
 

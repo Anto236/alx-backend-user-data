@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """ Authentication helper class
 """
+import uuid
 from bcrypt import hashpw, gensalt, checkpw
 from db import DB
 from user import User
@@ -12,6 +13,12 @@ def _hash_password(password: str) -> bytes:
        Hashes the input password with a salt using bcrypt
     """
     return hashpw(password.encode('utf-8'), gensalt())
+
+def _generate_uuid() -> str:
+    """
+    Generates a new UUID and returns its string representation.
+    """
+    return str(uuid.uuid4())
 
 
 class Auth:
